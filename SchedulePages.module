@@ -59,7 +59,7 @@ class SchedulePages extends WireData implements Module, ConfigurableModule {
 			'title' => 'Schedule Pages',
 
 			// version: major, minor, revision, i.e. 100 = 1.0.0
-			'version' => 121,
+			'version' => 122,
 
 			// summary is brief description of what this module is
 			'summary' => 'This module allows scheduling (un)publication of pages.',
@@ -188,6 +188,8 @@ class SchedulePages extends WireData implements Module, ConfigurableModule {
 				} else if ($p->publish_from) {
 					// If publish_from is defined, publish page
 					$p->removeStatus(Page::statusUnpublished);
+					// Set created date to publish date
+					wire('db')->query("UPDATE pages SET created='".date ("Y-m-d H:i:s", $page->publish_from)."' WHERE id={$p->id}"); 
 					$p->save();
 					if ($this->debug == "1") {
 						$p->setOutputFormatting(true);
